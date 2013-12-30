@@ -59,6 +59,7 @@ namespace coconut {
 			_running = true;
 			if (!shown) {
 				addChild(_prevScene, 0);
+				_prevScene->onExit();
 			}
 		}
     virtual void onEnterTransitionDidFinish() override {
@@ -525,22 +526,27 @@ namespace coconut {
 		class Overlay {
 		private:
 			cocos2d::FiniteTimeAction* _action;
-			OverlayScene* getOverlayScene() const {
+			OverlayScene* getScene() const {
 				return (OverlayScene*)cocos2d::Director::getInstance()->getRunningScene();
 			}
 			void destroy() const {
-				OverlayScene* overlay = getOverlayScene();
+				OverlayScene* overlay = getScene();
+				cocos2d::Scene* currScene = overlay->getOverlayScene();
 				cocos2d::Scene* prevScene = overlay->getPrevScene();
+				currScene->retain();
 				prevScene->retain();
 				overlay->destroyEnd();
 				cocos2d::Director::getInstance()->replaceScene(prevScene);
+				cocos2d::Node* temp = cocos2d::Node::create();
+				temp->addChild(currScene);
+				currScene->release();
 				prevScene->release();
 			}
 		public:
 			Overlay(cocos2d::FiniteTimeAction* action = nullptr) : _action(action) {
 			}
 			void close() const {
-				OverlayScene* overlay = getOverlayScene();
+				OverlayScene* overlay = getScene();
 				overlay->destroyStart();
 				if (_action) {
 					overlay->getOverlayScene()->runAction(cocos2d::Sequence::create(_action,
