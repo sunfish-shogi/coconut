@@ -1,0 +1,135 @@
+//
+//  MvcModule.cpp
+//  coconut
+//
+//  Created by Kubo Ryosuke on 2013/10/16.
+//
+//
+
+#include "MvcModule.h"
+#include "../EventEmitter.hpp"
+#include "../resouces/ImageManager.h"
+#include "../resouces/SoundManager.h"
+
+USING_NS_CC;
+
+namespace coconut {
+			
+	class ExtendedScene : public Scene {
+		
+		DEFINE_EVENT_EMITTER(Enter);
+		DEFINE_EVENT_EMITTER(EnterTransFinish);
+		DEFINE_EVENT_EMITTER(Exit);
+		DEFINE_EVENT_EMITTER(ExitTransStart);
+		DEFINE_EVENT_EMITTER(Destroy);
+		
+	private:
+		
+		std::string _name;
+		
+	public:
+		
+		ExtendedScene();
+		virtual ~ExtendedScene();
+		
+		virtual bool init(const char* sceneName);
+		
+		virtual void onEnter() override;
+		virtual void onEnterTransitionDidFinish() override;
+		virtual void onExit() override;
+		virtual void onExitTransitionDidStart() override;
+	
+		static ExtendedScene* create(const char* sceneName);
+	
+	};
+	
+	ExtendedScene::ExtendedScene() {
+	}
+	
+	ExtendedScene::~ExtendedScene() {
+		emitDestroy();
+		
+		ImageManager::getInstance()->unload(_name.c_str());
+		SoundManager::getInstance()->unload(_name.c_str());
+	}
+	
+	bool ExtendedScene::init(const char* sceneName) {
+		if (!Scene::init()) {
+			return false;
+		}
+		
+		_name = sceneName;
+		
+		ImageManager::getInstance()->load(_name.c_str(), false);
+		SoundManager::getInstance()->load(_name.c_str(), false);
+		
+		return true;
+	}
+	
+	void ExtendedScene::onEnter() {
+		Scene::onEnter();
+		emitEnter();
+	}
+	
+	void ExtendedScene::onEnterTransitionDidFinish() {
+		Scene::onEnterTransitionDidFinish();
+		emitEnterTransFinish();
+	}
+	
+	void ExtendedScene::onExit() {
+		Scene::onExit();
+		emitExit();
+	}
+		
+	void ExtendedScene::onExitTransitionDidStart() {
+		Scene::onExitTransitionDidStart();
+		emitExitTransStart();
+	}
+	
+	ExtendedScene* ExtendedScene::create(const char* sceneName) {
+		ExtendedScene* instance = new ExtendedScene();
+		if (instance != nullptr && instance->init(sceneName)) {
+			instance->autorelease();
+			return instance;
+		}
+		CC_SAFE_DELETE(instance);
+		return nullptr;
+	}
+	
+	MvcModule::MvcModule(const char* sceneName) {
+		ExtendedScene* scene = ExtendedScene::create(sceneName);
+		_scene = scene;
+	}
+	
+	MvcModule::~MvcModule() {
+	}
+	
+	Scene* MvcModule::scene() {
+		return _scene;
+	}
+	
+	void MvcModule::onEnter(const std::function<void ()>& callback) {
+		_scene->onEnter(callback);
+	}
+	
+	void MvcModule::onEnterTransFinish(const std::function<void ()>& callback) {
+		_scene->onEnterTransFinish(callback);
+	}
+	
+	void MvcModule::onExit(const std::function<void ()>& callback) {
+		_scene->onExit(callback);
+	}
+	
+	void MvcModule::onExitTransStart(const std::function<void ()>& callback) {
+		_scene->onExitTransStart(callback);
+	}
+	
+	void MvcModule::onDestroy(const std::function<void ()>& callback) {
+		_scene->onDestroy(callback);
+	}
+	
+	void MvcModule::start(const SceneChanger& sceneChanger) {
+		sceneChanger.changeTo(_scene);
+	}
+	
+}
