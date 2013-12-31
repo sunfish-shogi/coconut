@@ -8,7 +8,7 @@
 #ifndef __coconut__ScrollLayer__
 #define __coconut__ScrollLayer__
 
-#include "../../finger_gestures/GestureLayer.h"
+#include "../../finger_gestures/FingerGesture.h"
 
 namespace coconut {
 	
@@ -17,7 +17,7 @@ namespace coconut {
 	}
 	typedef _ScrollDirection::Type ScrollDirection;
 	
-	class ScrollLayer : public GestureLayer {
+	class ScrollLayer : public cocos2d::Layer {
 	private:
 		
 		cocos2d::Size _viewSize;
@@ -34,6 +34,8 @@ namespace coconut {
 		cocos2d::ClippingNode* _clipper;
 		cocos2d::DrawNode* _stencil;
 		cocos2d::Layer* _content;
+		
+		FingerGesture _fingerGesture;
 		
 		cocos2d::Point _velocity;
 		struct {
@@ -154,12 +156,6 @@ namespace coconut {
 																		const cocos2d::Point& velocity);
 			
 		// overrides
-		virtual GestureResult fgTouchBegan(const cocos2d::Point& position) override;
-		virtual void fgMove(const cocos2d::Point& position,
-												const cocos2d::Point& delta) override;
-		virtual void fgDetouch(const cocos2d::Point& position) override;
-		virtual GestureResult fgFlickWithDetouch(const cocos2d::Point& start,
-																						 const cocos2d::Point& velocity) override;
 		virtual void addChild(cocos2d::Node * child) override {
 			_content->addChild(child);
 		}

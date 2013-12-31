@@ -11,13 +11,16 @@
 
 USING_NS_CC;
 
+#define CALL_HANDLER(func, param, proc)					do { if (func && func param == GestureResult::Ok) { proc } } while (false);
 
 namespace coconut {
   
 	FingerGesture::FingerGesture() {
+		init();
 	}
 	
-	FingerGesture::FingerGesture(cocos2d::Node* target, bool multi) {
+	FingerGesture::FingerGesture(Node* target, bool multi) {
+		init();
 		registerWithNode(target, multi);
 	}
 	
@@ -55,7 +58,7 @@ namespace coconut {
 		_swipeOk = false;
 	}
 	
-	void FingerGesture::registerWithNode(cocos2d::Node* target, bool multi) {
+	void FingerGesture::registerWithNode(Node* target, bool multi) {
 		unregister();
 		
     EventListener* listener = EventListenerTouchAllAtOnce::create();
@@ -108,7 +111,7 @@ namespace coconut {
 				}
 			}
 			Point point = t2p(touch);
-			if (fgTouchFilter && fgTouchFilter(point) == TouchFilterResult::Ok) {
+			if (!fgTouchFilter || fgTouchFilter(point) == TouchFilterResult::Ok) {
 				TouchHistory th;
 				th.id = touch->getID();
 				th.start = point;
@@ -181,19 +184,19 @@ namespace coconut {
 		touchesCancelled(touches);
 	}
 	
-	void FingerGesture::onTouchesBegan(const std::vector<cocos2d::Touch*>& touches, Event* event) {
+	void FingerGesture::onTouchesBegan(const std::vector<Touch*>& touches, Event* event) {
 		touchesBegan(touches);
 	}
 		
-	void FingerGesture::onTouchesMoved(const std::vector<cocos2d::Touch*>& touches, Event* event) {
+	void FingerGesture::onTouchesMoved(const std::vector<Touch*>& touches, Event* event) {
 		touchesMoved(touches);
 	}
 	
-	void FingerGesture::onTouchesEnded(const std::vector<cocos2d::Touch*>& touches, Event* event) {
+	void FingerGesture::onTouchesEnded(const std::vector<Touch*>& touches, Event* event) {
 		touchesEnded(touches);
 	}
 	
-	void FingerGesture::onTouchesCancelled(const std::vector<cocos2d::Touch*>& touches, Event* event) {
+	void FingerGesture::onTouchesCancelled(const std::vector<Touch*>& touches, Event* event) {
 		touchesCancelled(touches);
 	}
 	
@@ -211,10 +214,7 @@ namespace coconut {
 			// single touch
 			const TouchHistory& th = _touchHistories[0];
 			
-			if (fgTouch && fgTouch(th.curr) == GestureResult::Ok) {
-				_tapOk = false;
-				return true;
-			}
+			CALL_HANDLER(fgTouch, (th.curr), _tapOk = false; return true;);
 			
 			scheduleLongTouch();
 		}
@@ -248,8 +248,10 @@ namespace coconut {
 			}
 			
 			// movement
-			if (fgMove) { fgMove(th.curr); }
-			if (fgMove) { fgMoveWithDelta(th.prev, delta); }
+			CALL_HANDLER(fgMoveWithDeltaRotation, (th.prev, delta, 0.0f), return;);
+			CALL_HANDLER(fgMoveWithRotation, (th.curr, 0.0f), return;);
+			CALL_HANDLER(fgMoveWithDelta, (th.prev, delta), return;);
+			CALL_HANDLER(fgMove, (th.curr), return;);
 			
 		} else if (_touchHistories.size() == 2) {
 			// double touch
@@ -262,7 +264,7 @@ namespace coconut {
 			float currMagunitude = th1.curr.getDistance(th2.curr);
 			float scale = currMagunitude == 0.0f || prevMagunitude == 0.0f
 										? 1.0f :currMagunitude / prevMagunitude;
-			fgPinch(prevMiddle, scale);
+			CALL_HANDLER(fgPinch, (prevMiddle, scale), );
 	
 			// movement
 			Point currMiddle = th1.curr.getMidpoint(th2.curr);
@@ -272,8 +274,10 @@ namespace coconut {
 			float deltaRotation = currRotation - prevRotation;
 			if (deltaRotation > 180.0f) { deltaRotation -= 180.0f * 2; }
 			if (deltaRotation < -180.0f) { deltaRotation += 180.0f * 2; }
-			if (fgMove) { fgMoveWithRotation(currMiddle, currRotation); }
-			if (fgMove) { fgMoveWithDeltaRotation(prevMiddle, delta, deltaRotation); }
+			CALL_HANDLER(fgMoveWithDeltaRotation, (prevMiddle, delta, deltaRotation), return;);
+			CALL_HANDLER(fgMoveWithRotation, (currMiddle, currRotation), return;);
+			CALL_HANDLER(fgMoveWithDelta, (prevMiddle, delta), return;);
+			CALL_HANDLER(fgMove, (currMiddle), return;);
 		}
 	}
 	
@@ -299,9 +303,7 @@ namespace coconut {
 			// long tap
 			if (checkLongTap(th.startTime)) {
 				_prevTapTime = th.startTime;
-				if (fgLongTap && fgLongTap(th.start) == GestureResult::Ok) {
-					return;
-				}
+				CALL_HANDLER(fgLongTap, (th.start), return;);
 			}
 			
 			// tap
@@ -311,24 +313,22 @@ namespace coconut {
 				if (_enableDoubleTap) {
 					scheduleSingleTap();
 				} else {
-					if (fgTap && fgTap(th.start) == GestureResult::Ok) {
-						return;
-					}
+					CALL_HANDLER(fgTap, (th.start), return;);
 				}
 			}
 			
 			// flick
-			if (checkFlick() && fgFlickWithDetouch && fgFlickWithDetouch(th.start, _largeVelocity) == GestureResult::Ok) {
-				return;
+			if (checkFlick()) {
+				CALL_HANDLER(fgFlickWithDetouch, (th.start, _largeVelocity), return;);
 			}
 			
 			// swipe
 			Point dsum = th.curr - th.start;
-			if (checkSwipe(dsum) && fgSwipeWithDetouch && fgSwipeWithDetouch(th.start, dsum) == GestureResult::Ok) {
-				return;
+			if (checkSwipe(dsum)) {
+				CALL_HANDLER(fgSwipeWithDetouch, (th.start, dsum), return;);
 			}
 			
-			if (fgDetouch) { fgDetouch(th.curr); }
+			CALL_HANDLER(fgDetouch, (th.curr), return;);
 		}
 	}
 	
@@ -411,9 +411,7 @@ namespace coconut {
 	void FingerGesture::longTouchHandler() {
 		if (_enableLongTouch && _tapOk && _touchHistories.size() == 1) {
 			const TouchHistory& th = _touchHistories[0];
-			if (fgLongTouch && fgLongTouch(th.start) == GestureResult::Ok) {
-				_tapOk = false;
-			}
+			CALL_HANDLER(fgLongTouch, (th.start), _tapOk = false;);
 		}
 	}
 	
@@ -433,7 +431,7 @@ namespace coconut {
 	
 	void FingerGesture::doubleTapHandler() {
 		if (_enableDoubleTap) {
-			if (fgTap) { fgTap(_prevTap); }
+			CALL_HANDLER(fgTap, (_prevTap), return;);
 		}
 	}
 		

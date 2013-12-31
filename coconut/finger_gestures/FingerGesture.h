@@ -75,6 +75,8 @@ namespace coconut {
 		float _swipeXThreshold;
 		float _swipeYThreshold;
 	
+		void init();
+		
 		// geometry
 		static float angleAsRadian(const cocos2d::Point& s,
 															 const cocos2d::Point& e) {
@@ -113,12 +115,10 @@ namespace coconut {
 	public:
 		
 		FingerGesture();
-		FingerGesture(cocos2d::Node* target, bool multi = true);
+		FingerGesture(cocos2d::Node* target, bool multi = false);
 		virtual ~FingerGesture();
 		
-		void init();
-		
-		void registerWithNode(cocos2d::Node* target, bool multi = true);
+		void registerWithNode(cocos2d::Node* target, bool multi = false);
 		void unregister();
 		
 		int getTouchCount() const {

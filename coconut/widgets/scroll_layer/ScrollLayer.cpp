@@ -27,7 +27,7 @@ namespace coconut {
 	
 	bool ScrollLayer::init(const Size& viewSize, const Rect& contentRect,
 												 ScrollDirection direction, bool clipping) {
-		if (!GestureLayer::init()) {
+		if (!Layer::init()) {
 			return false;
 		}
 		_clipping = clipping;
@@ -39,15 +39,47 @@ namespace coconut {
 		_content = Layer::create();
 		if (_clipping) {
 			_clipper = ClippingNode::create();
-			GestureLayer::addChild(_clipper, 0, 0);
+			Layer::addChild(_clipper, 0, 0);
 			_clipper->addChild(_content);
 		} else {
-			GestureLayer::addChild(_content, 0, 0);
+			Layer::addChild(_content, 0, 0);
 		}
 		
 		setScrollDirection(direction);
 		updateContentRange();
 		initStencil();
+		
+		_fingerGesture.fgTouchFilter = [this](const Point pos) {
+			if (pos.x >= 0.0f &&
+					pos.x <= _viewSize.width &&
+					pos.y >= 0.0f &&
+					pos.y <= _viewSize.height) {
+				stopAutoScroll();
+				return TouchFilterResult::Ok;
+			}
+			return TouchFilterResult::Reject;
+		};
+		
+		_fingerGesture.fgMoveWithDelta = [this](const Point& pos, const Point& delta) {
+			stopAutoScroll();
+			Point d = delta;
+			d.x *= overscrollReductionX();
+			d.y *= overscrollReductionY();
+			move(_content->getPosition() + d, _enableOverscrollBounce);
+			return GestureResult::Ok;
+		};
+		
+		_fingerGesture.fgDetouch = [this](const Point& pos) {
+			slDetouch(pos);
+			return GestureResult::Ok;
+		};
+		
+		_fingerGesture.fgFlickWithDetouch = [this](const Point& start, const Point& velocity) {
+			slFlickWithDetouch(start, velocity);
+			return GestureResult::Ok;
+		};
+		
+		_fingerGesture.registerWithNode(this);
 		
 		stopAutoScroll();
 		scheduleUpdate();
@@ -179,7 +211,7 @@ namespace coconut {
 					_velocity.x = _velocity.x * reductionOS;
 				}
 				pos.x += _velocity.x * delta;
-			} else if (isOverscrolledX() && getTouchCount() == 0) {
+			} else if (isOverscrolledX() && _fingerGesture.getTouchCount() == 0) {
 				// bounce
 				pos.x = posN.x + (pos.x - posN.x) * bounce;
 			}
@@ -193,42 +225,12 @@ namespace coconut {
 					_velocity.y = _velocity.y * reductionOS;
 				}
 				pos.y += _velocity.y * delta;
-			} else if (isOverscrolledY() && getTouchCount() == 0) {
+			} else if (isOverscrolledY() && _fingerGesture.getTouchCount() == 0) {
 				// bounce
 				pos.y = posN.y + (pos.y - posN.y) * bounce;
 			}
 			move(pos, _enableOverscrollBounce);
 		}
-	}
-		
-	GestureResult ScrollLayer::fgTouchBegan(const Point& position) {
-		if (position.x >= 0.0f &&
-				position.x <= _viewSize.width &&
-				position.y >= 0.0f &&
-				position.y <= _viewSize.height) {
-			stopAutoScroll();
-			return GestureResult::OK;
-		}
-		return GestureResult::UNCAUGHT;
-	}
-	
-	void ScrollLayer::fgMove(const Point& position,
-													 const Point& delta) {
-		stopAutoScroll();
-		Point d = delta;
-		d.x *= overscrollReductionX();
-		d.y *= overscrollReductionY();
-		move(_content->getPosition() + d, _enableOverscrollBounce);
-	}
-	
-	void ScrollLayer::fgDetouch(const cocos2d::Point& position) {
-		slDetouch(position);
-	}
-	
-	GestureResult ScrollLayer::fgFlickWithDetouch(const Point& start,
-																								const Point& velocity) {
-		slFlickWithDetouch(start, velocity);
-		return GestureResult::OK;
 	}
 		
 	void ScrollLayer::slFlickWithDetouch(const Point& start,
