@@ -10,6 +10,7 @@
 #define __coconut_SceneChanger__
 
 #include "cocos2d.h"
+#include "../utils/NodeUtils.h"
 
 namespace coconut {
 	
@@ -533,14 +534,9 @@ namespace coconut {
 				OverlayScene* overlay = getScene();
 				cocos2d::Scene* currScene = overlay->getOverlayScene();
 				cocos2d::Scene* prevScene = overlay->getPrevScene();
-				currScene->retain();
-				prevScene->retain();
+				NodeUtils::holdInCurrentFrame(currScene, prevScene, nullptr);
 				overlay->destroyEnd();
 				cocos2d::Director::getInstance()->replaceScene(prevScene);
-				cocos2d::Node* temp = cocos2d::Node::create();
-				temp->addChild(currScene);
-				currScene->release();
-				prevScene->release();
 			}
 		public:
 			Overlay(cocos2d::FiniteTimeAction* action = nullptr) : _action(action) {
