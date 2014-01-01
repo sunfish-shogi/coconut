@@ -38,10 +38,19 @@ namespace coconut {
 		
 	};
 	
+	class TextureLoader : public ResouceLoader<std::string> {
+	protected:
+		
+		virtual void onLoad(const std::string& resouce) override final;
+		virtual void onUnload(const std::string& resouce) override final;
+		
+	};
+	
 	class ImageManager {
 	private:
 		
 		SpriteFameLoader _spriteFrameLoader;
+		TextureLoader _textureLoader;
 		
 		ImageManager() {
 		}
@@ -59,6 +68,8 @@ namespace coconut {
 		void addCommonSpriteFrame(const char* plist, const char* texture);
 		void addSpriteFrame(const char* sceneName, const char* plist);
 		void addSpriteFrame(const char* sceneName, const char* plist, const char* texture);
+		void addCommonTexture(const char* texture);
+		void addTexture(const char* sceneName, const char* texture);
 		
 		void prepare();
 		void load(const char* sceneName, bool autoUnload = true);
