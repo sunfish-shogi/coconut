@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>Description</key>
-	<string>C++ classes for cacocos MVC.</string>
+	<string>C++ classes for coconut MVC.</string>
 	<key>Kind</key>
 	<string>Xcode.IDEKit.TextSubstitutionFileTemplateKind</string>
 	<key>Options</key>
@@ -44,6 +44,6 @@
 	<key>SortOrder</key>
 	<string>1</string>
 	<key>Summary</key>
-	<string>C++ classes for cacocos MVC.</string>
+	<string>C++ classes for coconut MVC.</string>
 </dict>
 </plist>
