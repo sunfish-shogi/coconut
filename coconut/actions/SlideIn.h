@@ -18,10 +18,10 @@ namespace coconut {
 	public:
     /** creates the action */
     static SlideIn* create(float duration, const cocos2d::Point& offset);
-    static SlideIn* down(float duration) {
+    static SlideIn* top(float duration) {
 			return create(duration, cocos2d::Point(0, cocos2d::Director::getInstance()->getVisibleSize().height));
 		}
-    static SlideIn* up(float duration) {
+    static SlideIn* bottom(float duration) {
 			return create(duration, cocos2d::Point(0, -cocos2d::Director::getInstance()->getVisibleSize().height));
 		}
     static SlideIn* left(float duration) {
