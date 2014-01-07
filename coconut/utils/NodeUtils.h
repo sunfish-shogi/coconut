@@ -35,6 +35,10 @@ namespace coconut {
 			target->release();
 		}
 		
+		static void move(cocos2d::Node* node, const cocos2d::Point& delta) {
+			node->setPosition(node->getPosition() + delta);
+		}
+		
 		static void remove(cocos2d::Node* node) {
 			node->getParent()->removeChild(node);
 		}

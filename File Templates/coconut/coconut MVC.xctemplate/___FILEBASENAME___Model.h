@@ -9,6 +9,7 @@
 #ifndef _____PROJECTNAME________FILEBASENAME___Model__
 #define _____PROJECTNAME________FILEBASENAME___Model__
 
+#include <coconut/Macro.hpp>
 #include <coconut/EventEmitter.hpp>
 
 class ___FILEBASENAME___Model {

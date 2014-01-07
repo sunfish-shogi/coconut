@@ -47,8 +47,8 @@ public:
 	 @brief get global instance
 	 */
 	static ObjectContainer* global() {
-		static ObjectContainer singleton;
-		return &singleton;
+		static ObjectContainer instance;
+		return &instance;
 	}
 	
 	/**

@@ -9,6 +9,7 @@
 #ifndef _____PROJECTNAME________FILEBASENAME___Controller__
 #define _____PROJECTNAME________FILEBASENAME___Controller__
 
+#include <coconut/Macro.hpp>
 #include <coconut/scene/SceneChanger.hpp>
 
 namespace ___VARIABLE_namespace___ {
@@ -21,10 +22,10 @@ namespace ___VARIABLE_namespace___ {
 		// event emitters
 //		DEFINE_EVENT_EMITTER(/* event name */);
 
-	private:
+		PROPERTY(___FILEBASENAME___View*, _view, View);
+		PROPERTY(___FILEBASENAME___Model*, _model, Model);
 
-		___FILEBASENAME___View* _view;
-		___FILEBASENAME___Model* _model;
+	private:
 
 	protected:
 
@@ -32,12 +33,6 @@ namespace ___VARIABLE_namespace___ {
 
 		___FILEBASENAME___Controller();
 		virtual ~___FILEBASENAME___Controller();
-		void setView(___FILEBASENAME___View* view) {
-			_view = view;
-		}
-		void setModel(___FILEBASENAME___Model* model) {
-			_model = model;
-		}
 		void init();
 
 	};
