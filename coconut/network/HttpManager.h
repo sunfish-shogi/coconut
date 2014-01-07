@@ -35,8 +35,7 @@ namespace coconut {
 		
 	private:
 		
-		IEncripter* _encrypter;
-		std::function<void (IEncripter*)> _encDeleter;
+		std::unique_ptr<IEncripter> _encrypter;
 		std::list<Request*> _requests;
 		std::string _contentType;
 		std::vector<std::string> _commonHeaders;
@@ -51,22 +50,14 @@ namespace coconut {
 		
 		template <class T>
 		void setEncrypter() {
-			_encDeleter(_encrypter);
-			_encrypter = new T();
-			_encDeleter = [](IEncripter* e) {
-				delete (T*)e;
-			};
+			_encrypter.reset(new T(), std::default_delete<T>());
 		}
 		template <class T, class U>
 		void setEncrypter(U param) {
-			_encDeleter(_encrypter);
-			_encrypter = new T(param);
-			_encDeleter = [](IEncripter* e) {
-				delete (T*)e;
-			};
+			_encrypter.reset(new T(param), std::default_delete<T>());
 		}
 		IEncripter* getEncrypter() {
-			return _encrypter;
+			return _encrypter.get();
 		}
 		
 		void setContentType(const char* contentType) {

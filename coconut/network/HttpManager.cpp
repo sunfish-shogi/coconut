@@ -97,8 +97,7 @@ namespace coconut {
 	};
 	
 	HttpManager::HttpManager() :
-		_encrypter(new DefaultHttpEncrypter()),
-		_encDeleter([](IEncripter* e) {delete (DefaultHttpEncrypter*)e;}) {
+			_encrypter(new DefaultHttpEncrypter(), std::default_delete<DefaultHttpEncrypter>()) {
 	}
 	
 	HttpManager::~HttpManager() {
