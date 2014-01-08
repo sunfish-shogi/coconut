@@ -31,4 +31,6 @@ private: type name; \
 public: type& get##funcName() { return name; } \
 public: const type& get##funcName() const { return name; }
 
+#define ARRAY_SIZE(a)				((int)(sizeof(a)/sizeof(a[0])))
+
 #endif

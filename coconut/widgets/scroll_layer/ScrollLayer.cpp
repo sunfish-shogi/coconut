@@ -6,7 +6,7 @@
 //
 
 #include "ScrollLayer.h"
-#include "../../Utils/ArrayUtils.h"
+#include "../../Macro.hpp"
 #include "../../Utils/GeomUtils.h"
 
 USING_NS_CC;

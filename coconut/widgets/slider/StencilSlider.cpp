@@ -7,7 +7,7 @@
 //
 
 #include "StencilSlider.h"
-#include "../../utils/ArrayUtils.h"
+#include "../../Macro.hpp"
 
 USING_NS_CC;
 
