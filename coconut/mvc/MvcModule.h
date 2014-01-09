@@ -32,6 +32,10 @@ namespace coconut {
 		
 		cocos2d::Scene* scene();
 		
+		void onceEnter(const std::function<void ()>& callback);
+		void onceEnterTransFinish(const std::function<void ()>& callback);
+		void onceExit(const std::function<void ()>& callback);
+		void onceExitTransStart(const std::function<void ()>& callback);
 		void onEnter(const std::function<void ()>& callback);
 		void onEnterTransFinish(const std::function<void ()>& callback);
 		void onExit(const std::function<void ()>& callback);

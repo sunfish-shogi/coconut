@@ -14,6 +14,90 @@
 
 namespace coconut {
 	
+	class OverlayScene final : public cocos2d::Scene {
+	private:
+		bool _shown;
+		cocos2d::Scene* _overlay;
+		cocos2d::Scene* _prevScene;
+		cocos2d::FiniteTimeAction* _action;
+	public:
+		OverlayScene(cocos2d::Scene* scene, cocos2d::FiniteTimeAction* action) {
+			_shown = false;
+			_overlay = scene;
+			_overlay->setVisible(false);
+			addChild(_overlay, 1);
+			_prevScene = cocos2d::Director::getInstance()->getRunningScene();
+			addChild(_prevScene, 0);
+			_action = action;
+			CC_SAFE_RETAIN(_action);
+		}
+		~OverlayScene() {
+			CC_SAFE_RELEASE(_action);
+		}
+		cocos2d::Scene* getOverlayScene() {
+			return _overlay;
+		}
+		cocos2d::Scene* getPrevScene() {
+			return _prevScene;
+		}
+    virtual void onEnter() override {
+			_isTransitionFinished = false;
+			_overlay->onEnter();
+			resume();
+			_running = true;
+		}
+    virtual void onEnterTransitionDidFinish() override {
+			_isTransitionFinished = true;
+			if (!_shown) {
+				_prevScene->onExit();
+				if (_action) {
+					_overlay->runAction(cocos2d::Sequence::create(cocos2d::Show::create(),
+																												_action,
+																												cocos2d::CallFunc::create([this]() {_overlay->onEnterTransitionDidFinish();}),
+																												nullptr));
+				} else {
+					_overlay->setVisible(true);
+					_overlay->onEnterTransitionDidFinish();
+				}
+				_shown = true;
+			} else {
+				_overlay->onEnterTransitionDidFinish();
+			}
+		}
+    virtual void onExitTransitionDidStart() override {
+			_overlay->onExitTransitionDidStart();
+		}
+    virtual void onExit() override {
+			pause();
+			_running = false;
+			_overlay->onExit();
+		}
+		void destroy(cocos2d::FiniteTimeAction* action) {
+			_overlay->onExitTransitionDidStart();
+			if (action) {
+				_overlay->runAction(cocos2d::Sequence::createWithTwoActions(action,
+																																		cocos2d::CallFunc::create([this]() {destroyEnd();})));
+			} else {
+				destroyEnd();
+			}
+		}
+	private:
+		void destroyEnd() {
+			removeChild(_prevScene, false);
+			cocos2d::Director::getInstance()->popScene();
+		}
+	public:
+		static OverlayScene* create(cocos2d::Scene* scene, cocos2d::FiniteTimeAction* action) {
+			OverlayScene* instance = new OverlayScene(scene, action);
+			if (instance && instance->init()) {
+				instance->autorelease();
+				return instance;
+			}
+			CC_SAFE_DELETE(instance);
+			return nullptr;
+		}
+	};
+	
 	class SceneChanger {
 	private:
 		bool _push;
@@ -27,81 +111,19 @@ namespace coconut {
 			if (_push) {
 				cocos2d::Director::getInstance()->pushScene(scene);
 			} else {
+				cocos2d::Scene* prevScene = cocos2d::Director::getInstance()->getRunningScene();
+				while (true) {
+					if (typeid(*prevScene) != typeid(OverlayScene)) {
+						break;
+					}
+					cocos2d::Director::getInstance()->popScene();
+					prevScene = ((OverlayScene*)prevScene)->getPrevScene();
+				}
 				cocos2d::Director::getInstance()->replaceScene(scene);
 			}
 		}
 	public:
 		virtual void changeTo(cocos2d::Scene* scene) const = 0;
-	};
-	
-	class OverlayScene : public cocos2d::Scene {
-	private:
-		cocos2d::Scene* _overlay;
-		cocos2d::Scene* _prevScene;
-		cocos2d::FiniteTimeAction* _action;
-		bool shown;
-	public:
-		OverlayScene(cocos2d::Scene* scene, cocos2d::FiniteTimeAction* action) {
-			shown = false;
-			_overlay = scene;
-			_action = action;
-			_overlay->setVisible(false);
-			addChild(_overlay, 1);
-			_prevScene = cocos2d::Director::getInstance()->getRunningScene();
-			_prevScene->retain();
-		}
-		~OverlayScene() {
-			_prevScene->release();
-		}
-    virtual void onEnter() override {
-			_isTransitionFinished = false;
-			_overlay->onEnter();
-			resume();
-			_running = true;
-			if (!shown) {
-				addChild(_prevScene, 0);
-				_prevScene->onExit();
-			}
-		}
-    virtual void onEnterTransitionDidFinish() override {
-			_isTransitionFinished = true;
-			if (!shown) {
-				if (_action) {
-					_overlay->runAction(cocos2d::Sequence::create(cocos2d::Show::create(),
-																												_action,
-																												cocos2d::CallFunc::create([this]() {_overlay->onEnterTransitionDidFinish();}),
-																												nullptr));
-				} else {
-					_overlay->setVisible(true);
-					_overlay->onEnterTransitionDidFinish();
-				}
-				shown = true;
-			} else {
-				_overlay->onEnterTransitionDidFinish();
-			}
-		}
-		cocos2d::Scene* getOverlayScene() {
-			return _overlay;
-		}
-		cocos2d::Scene* getPrevScene() {
-			return _prevScene;
-		}
-		void destroyStart() {
-			_overlay->onExitTransitionDidStart();
-		}
-		void destroyEnd() {
-			removeChild(_overlay);
-			removeChild(_prevScene);
-		}
-		static OverlayScene* create(cocos2d::Scene* scene, cocos2d::FiniteTimeAction* action) {
-			OverlayScene* instance = new OverlayScene(scene, action);
-			if (instance && instance->init()) {
-				instance->autorelease();
-				return instance;
-			}
-			CC_SAFE_DELETE(instance);
-			return nullptr;
-		}
 	};
 	
 	namespace SceneChangers{
@@ -512,7 +534,11 @@ namespace coconut {
 		private:
 			cocos2d::FiniteTimeAction* _action;
 		public:
-			Overlay(cocos2d::FiniteTimeAction* action = nullptr) : SceneChanger(false), _action(action) {
+			Overlay(cocos2d::FiniteTimeAction* action = nullptr) : SceneChanger(true), _action(action) {
+				CC_SAFE_RETAIN(_action);
+			}
+			virtual ~Overlay() {
+				CC_SAFE_RELEASE(_action);
 			}
 			virtual void changeTo(cocos2d::Scene* scene) const override {
 				OverlayScene* overlay = OverlayScene::create(scene, _action);
@@ -527,30 +553,16 @@ namespace coconut {
 		class Overlay {
 		private:
 			cocos2d::FiniteTimeAction* _action;
-			OverlayScene* getScene() const {
-				return (OverlayScene*)cocos2d::Director::getInstance()->getRunningScene();
-			}
-			void destroy() const {
-				OverlayScene* overlay = getScene();
-				cocos2d::Scene* currScene = overlay->getOverlayScene();
-				cocos2d::Scene* prevScene = overlay->getPrevScene();
-				NodeUtils::holdInCurrentFrame(currScene, prevScene, nullptr);
-				overlay->destroyEnd();
-				cocos2d::Director::getInstance()->replaceScene(prevScene);
-			}
 		public:
 			Overlay(cocos2d::FiniteTimeAction* action = nullptr) : _action(action) {
+				CC_SAFE_RETAIN(_action);
+			}
+			virtual ~Overlay() {
+				CC_SAFE_RELEASE(_action);
 			}
 			void close() const {
-				OverlayScene* overlay = getScene();
-				overlay->destroyStart();
-				if (_action) {
-					overlay->getOverlayScene()->runAction(cocos2d::Sequence::create(_action,
-																																					cocos2d::CallFunc::create([this]() {destroy();}),
-																																					nullptr));
-				} else {
-					destroy();
-				}
+				OverlayScene* overlay = (OverlayScene*)cocos2d::Director::getInstance()->getRunningScene();
+				overlay->destroy(_action);
 			}
 		};
 		

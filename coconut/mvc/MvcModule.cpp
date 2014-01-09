@@ -67,21 +67,25 @@ namespace coconut {
 	}
 	
 	void ExtendedScene::onEnter() {
+		log("Scene [%s]: onEnter", _name.c_str());
 		Scene::onEnter();
 		emitEnter();
 	}
 	
 	void ExtendedScene::onEnterTransitionDidFinish() {
+		log("Scene [%s]: onEnterTransitionDidFinish", _name.c_str());
 		Scene::onEnterTransitionDidFinish();
 		emitEnterTransFinish();
 	}
 	
 	void ExtendedScene::onExit() {
+		log("Scene [%s]: onExit", _name.c_str());
 		Scene::onExit();
 		emitExit();
 	}
 		
 	void ExtendedScene::onExitTransitionDidStart() {
+		log("Scene [%s]: onExitTransitionDidStart", _name.c_str());
 		Scene::onExitTransitionDidStart();
 		emitExitTransStart();
 	}
@@ -106,6 +110,22 @@ namespace coconut {
 	
 	Scene* MvcModule::scene() {
 		return _scene;
+	}
+	
+	void MvcModule::onceEnter(const std::function<void ()>& callback) {
+		_scene->onceEnter(callback);
+	}
+	
+	void MvcModule::onceEnterTransFinish(const std::function<void ()>& callback) {
+		_scene->onceEnterTransFinish(callback);
+	}
+	
+	void MvcModule::onceExit(const std::function<void ()>& callback) {
+		_scene->onceExit(callback);
+	}
+	
+	void MvcModule::onceExitTransStart(const std::function<void ()>& callback) {
+		_scene->onceExitTransStart(callback);
 	}
 	
 	void MvcModule::onEnter(const std::function<void ()>& callback) {
