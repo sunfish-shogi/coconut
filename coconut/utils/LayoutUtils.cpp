@@ -12,6 +12,14 @@ USING_NS_CC;
 
 namespace coconut {
  
+	Point LayoutUtils::visibleOrigin() {
+		return Director::getInstance()->getVisibleOrigin();
+	}
+	
+	Size LayoutUtils::visibleSize() {
+		return Director::getInstance()->getVisibleSize();
+	}
+	
 	Rect LayoutUtils::visibleRect() {
 		const Size& winSize = Director::getInstance()->getVisibleSize();
 		const Point& winOrigin = Director::getInstance()->getVisibleOrigin();

@@ -39,8 +39,9 @@ namespace coconut {
 			node->setPosition(node->getPosition() + delta);
 		}
 		
-		static void remove(cocos2d::Node* node) {
-			node->getParent()->removeChild(node);
+		static void removeAfter(cocos2d::Node* node, float delay) {
+			node->runAction(cocos2d::Sequence::createWithTwoActions(cocos2d::DelayTime::create(delay),
+																															cocos2d::RemoveSelf::create()));
 		}
 		
 		class ObjectHolder : public cocos2d::Object {

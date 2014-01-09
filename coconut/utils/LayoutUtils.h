@@ -20,6 +20,8 @@ namespace coconut {
 		
 	public:
 		
+		static cocos2d::Point visibleOrigin();
+		static cocos2d::Size visibleSize();
 		static cocos2d::Rect visibleRect();
 		
 		static cocos2d::Point visibleCenter();
