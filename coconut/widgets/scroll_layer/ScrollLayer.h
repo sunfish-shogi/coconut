@@ -168,13 +168,13 @@ namespace coconut {
 		cocos2d::Node* getChildByTag(int tag) {
 			return _content->getChildByTag(tag);
 		}
-		virtual cocos2d::Array* getChildren() override {
+		virtual cocos2d::Vector<Node*>& getChildren() override {
 			return _content->getChildren();
 		}
-		virtual const cocos2d::Array *getChildren() const override {
+		virtual const cocos2d::Vector<Node*>& getChildren() const override {
 			return _content->getChildren();
 		}
-		unsigned int getChildrenCount() const {
+		virtual ssize_t getChildrenCount() const {
 			return _content->getChildrenCount();
 		}
 		virtual void removeChild(Node* child, bool cleanup = true) override {

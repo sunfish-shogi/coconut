@@ -29,13 +29,6 @@ namespace coconut {
 																																	cocos2d::LabelTTF* onLabel,
 																																	cocos2d::LabelTTF* offLabel,
 																																	const std::function<void(bool)>& callback);
-		static cocos2d::extension::ControlSwitch* createControlSwitch(cocos2d::Sprite *maskSprite,
-																																	cocos2d::Sprite * onSprite,
-																																	cocos2d::Sprite * offSprite,
-																																	cocos2d::Sprite * thumbSprite,
-																																	const std::function<void(bool)>& callback) {
-			return createControlSwitch(maskSprite, onSprite, offSprite, thumbSprite, nullptr, nullptr, callback);
-		}
 		
 		// ControlSlider
 		static cocos2d::extension::ControlSlider* createControlSlider(const char* bgFile,
