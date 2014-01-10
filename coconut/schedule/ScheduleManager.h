@@ -26,6 +26,8 @@ namespace coconut {
 		virtual ~ScheduleManager();
 		
 		void clear();
+		void pause();
+		void resume();
 		
 		const Schedule* schedule(int priority, const Schedule::Callback& callback);
 		const Schedule* scheduleOnce(float dt, const std::function<void()>& callback);

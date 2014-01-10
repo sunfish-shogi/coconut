@@ -10,13 +10,14 @@
 #define coconut_Scene_h
 
 #include "cocos2d.h"
-#include "../scene/SceneChanger.hpp"
 #include "../Module.hpp"
+#include "../scene/SceneChanger.hpp"
 #include "../EventEmitter.hpp"
 
 namespace coconut {
 	
 	class ExtendedScene;
+	class ScheduleManager;
 	
 	class MvcModule : public Module {
 	private:

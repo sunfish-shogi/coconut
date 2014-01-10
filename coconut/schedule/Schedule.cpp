@@ -43,6 +43,14 @@ namespace coconut {
 		Director::getInstance()->getScheduler()->unscheduleUpdateForTarget(this);
 	}
 	
+	void Schedule::pause() {
+		Director::getInstance()->getScheduler()->pauseTarget(this);
+	}
+	
+	void Schedule::resume() {
+		Director::getInstance()->getScheduler()->resumeTarget(this);
+	}
+		
 	Schedule* Schedule::create(const Callback& callback) {
 		Schedule* instance = new Schedule(callback);
 		if (instance != nullptr) {

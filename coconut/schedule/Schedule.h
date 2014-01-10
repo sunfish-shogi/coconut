@@ -35,8 +35,6 @@ namespace coconut {
 			_callback = callback;
 		}
 		
-		static Schedule* create(const Callback& callback);
-		
 		virtual void update(float dt) override {
 			_callback(dt);
 		}
@@ -45,6 +43,11 @@ namespace coconut {
 		void scheduleOnce(float dt);
 		void scheduleForever(float interval, float dt = 0.0f);
 		void cancel();
+	
+		void pause();
+		void resume();
+		
+		static Schedule* create(const Callback& callback);
 		
 	};
 

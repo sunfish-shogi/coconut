@@ -25,6 +25,18 @@ namespace coconut {
 		}
 	}
 	
+	void ScheduleManager::pause() {
+		for (auto ite = _schedules.begin(); ite != _schedules.end(); ite++) {
+			(*ite)->pause();
+		}
+	}
+	
+	void ScheduleManager::resume() {
+		for (auto ite = _schedules.begin(); ite != _schedules.end(); ite++) {
+			(*ite)->resume();
+		}
+	}
+		
 	void ScheduleManager::release(Schedule* schedule) {
 		if (schedule) {
 			for (auto ite = _schedules.begin(); ite != _schedules.end(); ite++) {

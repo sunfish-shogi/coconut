@@ -8,8 +8,10 @@
 
 #include "MvcModule.h"
 #include "../EventEmitter.hpp"
+#include "../schedule/ScheduleManager.h"
 #include "../resouces/ImageManager.h"
 #include "../resouces/SoundManager.h"
+#include "../Macro.hpp"
 
 USING_NS_CC;
 
@@ -25,7 +27,9 @@ namespace coconut {
 		
 	private:
 		
+		bool _loaded;
 		std::string _name;
+		PROPERTY(ScheduleManager*, _scheduleManager, ScheduleManager);
 		
 	public:
 		
@@ -38,19 +42,20 @@ namespace coconut {
 		virtual void onEnterTransitionDidFinish() override;
 		virtual void onExit() override;
 		virtual void onExitTransitionDidStart() override;
-	
+		
 		static ExtendedScene* create(const char* sceneName);
 	
 	};
 	
-	ExtendedScene::ExtendedScene() {
+	ExtendedScene::ExtendedScene() : _loaded(false) {
 	}
 	
 	ExtendedScene::~ExtendedScene() {
 		emitDestroy();
-		
-		ImageManager::getInstance()->unload(_name.c_str());
-		SoundManager::getInstance()->unload(_name.c_str());
+		if (_loaded) {
+			ImageManager::getInstance()->unload(_name.c_str());
+			SoundManager::getInstance()->unload(_name.c_str());
+		}
 	}
 	
 	bool ExtendedScene::init(const char* sceneName) {
@@ -62,6 +67,7 @@ namespace coconut {
 		
 		ImageManager::getInstance()->load(_name.c_str(), false);
 		SoundManager::getInstance()->load(_name.c_str(), false);
+		_loaded = true;
 		
 		return true;
 	}
@@ -69,6 +75,7 @@ namespace coconut {
 	void ExtendedScene::onEnter() {
 		log("Scene [%s]: onEnter", _name.c_str());
 		Scene::onEnter();
+		_scheduleManager->resume();
 		emitEnter();
 	}
 	
@@ -81,6 +88,7 @@ namespace coconut {
 	void ExtendedScene::onExit() {
 		log("Scene [%s]: onExit", _name.c_str());
 		Scene::onExit();
+		_scheduleManager->pause();
 		emitExit();
 	}
 		
@@ -149,6 +157,7 @@ namespace coconut {
 	}
 	
 	void MvcModule::start(const SceneChanger& sceneChanger) {
+		_scene->setScheduleManager(get<ScheduleManager>());
 		sceneChanger.changeTo(_scene);
 	}
 	
