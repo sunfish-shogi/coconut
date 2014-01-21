@@ -116,8 +116,9 @@ namespace coconut {
 					if (typeid(*prevScene) != typeid(OverlayScene)) {
 						break;
 					}
-					cocos2d::Director::getInstance()->popScene();
+					((OverlayScene*)prevScene)->getOverlayScene()->onExit();
 					prevScene = ((OverlayScene*)prevScene)->getPrevScene();
+					cocos2d::Director::getInstance()->popScene();
 				}
 				cocos2d::Director::getInstance()->replaceScene(scene);
 			}

@@ -33,15 +33,17 @@ namespace coconut {
 		
 	public:
 		
-		cocos2d::Node* getBorder() {
+		cocos2d::Node* getBar() {
 			return _bar;
 		}
 		cocos2d::Node* getBackground() {
 			return _bg;
 		}
+		void setBackground(cocos2d::Node* bg);
 		cocos2d::Node* getHead() {
 			return _head;
 		}
+		void setHead(cocos2d::Node* head);
 		
 		bool initWithSprite(cocos2d::extension::Scale9Sprite* bar,
 												float width,
@@ -49,11 +51,11 @@ namespace coconut {
 												cocos2d::Node* bg);
 		
 		static EnlargedSlider* createWithSpriteFrameName(const char* bar,
-																										 float left,
-																										 float right,
+																										 float leftFixWidth,
+																										 float rightFixWidth,
 																										 float width,
-																										 const char* head,
-																										 const char* bg);
+																										 const char* head = nullptr,
+																										 const char* bg = nullptr);
 		
 	};
 	

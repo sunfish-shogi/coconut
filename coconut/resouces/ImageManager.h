@@ -75,6 +75,13 @@ namespace coconut {
 		void load(const char* sceneName, bool autoUnload = true);
 		void unload(const char* sceneName);
 		
+		void loadSpriteFrame(const char* plist);
+		void unloadSpriteFrame(const char* plist);
+		void loadSpriteFrame(const char* plist, const char* texture);
+		void unloadSpriteFrame(const char* plist, const char* texture);
+		void loadTexture(const char* texture);
+		void unloadTexture(const char* texture);
+		
 	};
 	
 };

@@ -33,22 +33,28 @@ namespace coconut {
 		
 		void load(ResouceList& preloadList, int count = 1) {
 			for (auto ite = preloadList.begin(); ite != preloadList.end(); ite++) {
-				size_t key = std::hash<T>()(*ite);
-				CCASSERT(_preloadCounter[key] >= 0, "invalid status.");
-				if (_preloadCounter[key] == 0) {
-					onLoad(*ite);
-				}
-				_preloadCounter[key] += count;
+				load(*ite, count);
 			}
 		}
 		void unload(ResouceList& preloadList, int count = 1) {
 			for (auto ite = preloadList.begin(); ite != preloadList.end(); ite++) {
-				size_t key = std::hash<T>()(*ite);
-				_preloadCounter[key] -= count;
-				CCASSERT(_preloadCounter[key] >= 0, "invalid status.");
-				if (_preloadCounter[key] == 0) {
-					onUnload(*ite);
-				}
+				unload(*ite, count);
+			}
+		}
+		void load(const T& resource, int count) {
+			size_t key = std::hash<T>()(resource);
+			CCASSERT(_preloadCounter[key] >= 0, "invalid status.");
+			if (_preloadCounter[key] == 0) {
+				onLoad(resource);
+			}
+			_preloadCounter[key] += count;
+		}
+		void unload(const T& resource, int count) {
+			size_t key = std::hash<T>()(resource);
+			_preloadCounter[key] -= count;
+			CCASSERT(_preloadCounter[key] >= 0, "invalid status.");
+			if (_preloadCounter[key] == 0) {
+				onUnload(resource);
 			}
 		}
 		
@@ -92,6 +98,12 @@ namespace coconut {
 				prepare();
 			}
 			unload(_preloadMap[sceneName]);
+		}
+		void load(const T& resource) {
+			load(resource, 1);
+		}
+		void unload(const T& resource) {
+			unload(resource, 1);
 		}
 		
 	};

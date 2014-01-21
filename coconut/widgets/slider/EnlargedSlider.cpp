@@ -43,6 +43,31 @@ namespace coconut {
 		return true;
 	}
 	
+	void EnlargedSlider::setBackground(Node* bg) {
+		if (_bg != bg) {
+			if (_bg) {
+				removeChild(_bg);
+			}
+			_bg = bg;
+			if (_bg) {
+				addChild(_bg);
+			}
+		}
+	}
+	
+	void EnlargedSlider::setHead(Node* head) {
+		if (_head != head) {
+			if (_head) {
+				removeChild(_head);
+			}
+			_head = head;
+			if (_head) {
+				addChild(_head);
+				_head->setPosition(getHeadPosition());
+			}
+		}
+	}
+	
 	Point EnlargedSlider::getBarPosition() const {
 		return Point(_width*(rate()-1.0f)*0.5f, 0);
 	}
@@ -78,14 +103,15 @@ namespace coconut {
 	}
 		
 	EnlargedSlider* EnlargedSlider::createWithSpriteFrameName(const char* bar,
-																														float left,
-																														float right,
+																														float leftFixedWidth,
+																														float rightFixedWidth,
 																														float width,
 																														const char* head,
 																														const char* bg) {
 		EnlargedSlider* instance = new EnlargedSlider();
 		Scale9Sprite* barSprite = Scale9Sprite::createWithSpriteFrameName(bar);
-		Rect capInsets(left, 0, barSprite->getOriginalSize().width - (left+right), barSprite->getOriginalSize().height);
+		Rect capInsets(leftFixedWidth, 0, barSprite->getOriginalSize().width - (leftFixedWidth+rightFixedWidth),
+									 barSprite->getOriginalSize().height);
 		barSprite->setCapInsets(capInsets);
 		Sprite* headSprite = head ? Sprite::createWithSpriteFrameName(head) : nullptr;
 		Sprite* bgSprite = bg ? Sprite::createWithSpriteFrameName(bg) : nullptr;

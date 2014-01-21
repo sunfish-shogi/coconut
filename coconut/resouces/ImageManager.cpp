@@ -90,4 +90,34 @@ namespace coconut {
 		_textureLoader.unload(sceneName);
 	}
 	
+	void ImageManager::loadSpriteFrame(const char* plist) {
+		loadSpriteFrame(plist, "");
+	}
+	
+	void ImageManager::unloadSpriteFrame(const char* plist) {
+		unloadSpriteFrame(plist, "");
+	}
+	
+	void ImageManager::loadSpriteFrame(const char* plist, const char* texture) {
+		SpriteFrameInfo resource;
+		resource.plist = plist;
+		resource.texture = texture;
+		_spriteFrameLoader.load(resource);
+	}
+	
+	void ImageManager::unloadSpriteFrame(const char* plist, const char* texture) {
+		SpriteFrameInfo resource;
+		resource.plist = plist;
+		resource.texture = texture;
+		_spriteFrameLoader.unload(resource);
+	}
+	
+	void ImageManager::loadTexture(const char* texture) {
+		_textureLoader.load(texture);
+	}
+	
+	void ImageManager::unloadTexture(const char* texture) {
+		_textureLoader.unload(texture);
+	}
+	
 }
