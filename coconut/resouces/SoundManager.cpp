@@ -128,6 +128,86 @@ namespace coconut {
 		_effectLoader.unload(sceneName);
 		_bgmLoader.unload(sceneName);
 	}
+		
+	void SoundManager::loadEffect(const char* soundFile) {
+		_effectLoader.load(soundFile);
+	}
+	
+	void SoundManager::loadEffects(const char* soundFile, ...) {
+		if (soundFile != nullptr) {
+			va_list params;
+			va_start(params, soundFile);
+			_effectLoader.load(soundFile);
+			while (true) {
+				const char* p = va_arg(params, const char*);
+				if (p == nullptr) {
+					break;
+				}
+				_effectLoader.load(p);
+			}
+			va_end(params);
+		}
+	}
+		
+	void SoundManager::unloadEffect(const char* soundFile) {
+		_effectLoader.unload(soundFile);
+	}
+	
+	void SoundManager::unloadEffects(const char* soundFile, ...) {
+		if (soundFile != nullptr) {
+			va_list params;
+			va_start(params, soundFile);
+			_effectLoader.unload(soundFile);
+			while (true) {
+				const char* p = va_arg(params, const char*);
+				if (p == nullptr) {
+					break;
+				}
+				_effectLoader.unload(p);
+			}
+			va_end(params);
+		}
+	}
+	
+	void SoundManager::loadBgm(const char* soundFile) {
+		_bgmLoader.load(soundFile);
+	}
+	
+	void SoundManager::loadBgms(const char* soundFile, ...) {
+		if (soundFile != nullptr) {
+			va_list params;
+			va_start(params, soundFile);
+			_bgmLoader.load(soundFile);
+			while (true) {
+				const char* p = va_arg(params, const char*);
+				if (p == nullptr) {
+					break;
+				}
+				_bgmLoader.load(p);
+			}
+			va_end(params);
+		}
+	}
+	
+	void SoundManager::unloadBgm(const char* soundFile) {
+		_bgmLoader.unload(soundFile);
+	}
+	
+	void SoundManager::unloadBgms(const char* soundFile, ...) {
+		if (soundFile != nullptr) {
+			va_list params;
+			va_start(params, soundFile);
+			_bgmLoader.unload(soundFile);
+			while (true) {
+				const char* p = va_arg(params, const char*);
+				if (p == nullptr) {
+					break;
+				}
+				_bgmLoader.unload(p);
+			}
+			va_end(params);
+		}
+	}
 	
 	void SoundManager::setVolume(float volume) {
 		SimpleAudioEngine::getInstance()->setEffectsVolume(volume);

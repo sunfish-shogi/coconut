@@ -70,6 +70,15 @@ namespace coconut {
 		void load(const char* sceneName, bool autoUnload = true);
 		void unload(const char* sceneName);
 		
+		void loadEffect(const char* soundFile);
+		void loadEffects(const char* soundFile, ...) CC_REQUIRES_NULL_TERMINATION;
+		void unloadEffect(const char* soundFile);
+		void unloadEffects(const char* soundFile, ...) CC_REQUIRES_NULL_TERMINATION;
+		void loadBgm(const char* soundFile);
+		void loadBgms(const char* soundFile, ...) CC_REQUIRES_NULL_TERMINATION;
+		void unloadBgm(const char* soundFile);
+		void unloadBgms(const char* soundFile, ...) CC_REQUIRES_NULL_TERMINATION;
+		
 		void setVolume(float volume);
 		float getVolume();
 		unsigned int play(const char* soundFile);
