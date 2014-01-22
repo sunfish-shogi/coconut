@@ -25,7 +25,7 @@ namespace coconut {
 		return true;
 	}
 	
-	Button* Button::createCustom(ButtonSprite* sprite) {
+	Button* Button::create(ButtonSprite* sprite) {
 		Button* instance = new Button();
 		if (instance != nullptr && instance->init(sprite)) {
 			instance->autorelease();
@@ -35,32 +35,38 @@ namespace coconut {
 		return nullptr;
 	}
 	
+	Button* Button::create(ButtonSprite* sprite, const std::function<void()>& callback) {
+		Button* instance = create(sprite);
+		instance->onPushed(callback);
+		return instance;
+	}
+	
 	Button* Button::createWithSprite(Node* sprite,
 																	 Node* touchingSprite) {
 		SimpleButtonSprite* buttonSprite = SimpleButtonSprite::create(sprite, touchingSprite);
-		return createCustom(buttonSprite);
+		return create(buttonSprite);
 	}
 	
 	Button* Button::createWithSpriteFileName(const char* sprite,
 																					 const char* touchingSprite) {
 		SimpleButtonSprite* buttonSprite = SimpleButtonSprite::createWithSpriteFileName(sprite, touchingSprite);
-		return createCustom(buttonSprite);
+		return create(buttonSprite);
 	}
 	
 	Button* Button::createWithSpriteFrameName(const char* sprite,
 																						const char* touchingSprite) {
 		SimpleButtonSprite* buttonSprite = SimpleButtonSprite::createWithSpriteFrameName(sprite, touchingSprite);
-		return createCustom(buttonSprite);
+		return create(buttonSprite);
 	}
 	
 	Button* Button::createWithSpriteFrame(SpriteFrame* sprite,
 																				SpriteFrame* touchingSprite) {
 		SimpleButtonSprite* buttonSprite = SimpleButtonSprite::createWithSpriteFrame(sprite, touchingSprite);
-		return createCustom(buttonSprite);
+		return create(buttonSprite);
 	}
 	
-	Button* Button::createWithSprite(Sprite* sprite,
-																	 Sprite* touchingSprite,
+	Button* Button::createWithSprite(Node* sprite,
+																	 Node* touchingSprite,
 																	 const std::function<void()>& callback) {
 		Button* instance = createWithSprite(sprite, touchingSprite);
 		instance->onPushed(callback);

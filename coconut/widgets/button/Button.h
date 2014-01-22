@@ -36,7 +36,8 @@ namespace coconut {
 		
 		virtual bool init(ButtonSprite* sprite);
 		
-		static Button* createCustom(ButtonSprite* sprite);
+		static Button* create(ButtonSprite* sprite);
+		static Button* create(ButtonSprite* sprite, const std::function<void()>& callback);
 		static Button* createWithSprite(cocos2d::Node* sprite,
 																		cocos2d::Node* touchingSprite = nullptr);
 		static Button* createWithSpriteFileName(const char* sprite,
@@ -45,10 +46,10 @@ namespace coconut {
 																						 const char* touchingSprite = nullptr);
 		static Button* createWithSpriteFrame(cocos2d::SpriteFrame* sprite,
 																				 cocos2d::SpriteFrame* touchingSprite = nullptr);
-		static Button* createWithSprite(cocos2d::Sprite* sprite,
-																		cocos2d::Sprite* touchingSprite,
+		static Button* createWithSprite(cocos2d::Node* sprite,
+																		cocos2d::Node* touchingSprite,
 																		const std::function<void()>& callback);
-		static Button* createWithSprite(cocos2d::Sprite* sprite,
+		static Button* createWithSprite(cocos2d::Node* sprite,
 																		const std::function<void()>& callback) {
 			return createWithSprite(sprite, nullptr, callback);
 		}

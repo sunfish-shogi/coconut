@@ -33,7 +33,6 @@ namespace coconut {
 		
 	public:
 		
-		CC_DEPRECATED_ATTRIBUTE
 		MotionButtonSprite() : _sprite(nullptr), _touchAction(nullptr), _detouchAction(nullptr) {}
 		virtual ~MotionButtonSprite() {
 			releaseActions();
@@ -46,8 +45,10 @@ namespace coconut {
 		virtual void touch() override;
 		virtual void detouch() override;
 		
-		CC_DEPRECATED_ATTRIBUTE
 		static MotionButtonSprite* create(cocos2d::Node* sprite, cocos2d::Action* touchAction, cocos2d::Action* detouchAction);
+		static MotionButtonSprite* createWithSpriteFileName(const char* filename, cocos2d::Action* touchAction, cocos2d::Action* detouchAction);
+		static MotionButtonSprite* createWithSpriteFrame(cocos2d::SpriteFrame* frame, cocos2d::Action* touchAction, cocos2d::Action* detouchAction);
+		static MotionButtonSprite* createWithSpriteFrameName(const char* framename, cocos2d::Action* touchAction, cocos2d::Action* detouchAction);
 		
 	};
 	

@@ -85,12 +85,14 @@ namespace coconut {
 	
 	void MotionButtonSprite::touch() {
 		if (_sprite != nullptr && _touchAction != nullptr) {
+			_sprite->stopAllActions();
 			_sprite->runAction(_touchAction);
 		}
 	}
 	
 	void MotionButtonSprite::detouch() {
 		if (_sprite != nullptr && _detouchAction != nullptr) {
+			_sprite->stopAllActions();
 			_sprite->runAction(_detouchAction);
 		}
 	}
@@ -103,6 +105,21 @@ namespace coconut {
 		}
 		CC_SAFE_DELETE(instance);
 		return nullptr;
+	}
+	
+	MotionButtonSprite* MotionButtonSprite::createWithSpriteFileName(const char* filename, Action* touchAction, Action* detouchAction) {
+		Sprite* sprite = Sprite::create(filename);
+		return sprite != nullptr ? create(sprite, touchAction, detouchAction) : nullptr;
+	}
+	
+	MotionButtonSprite* MotionButtonSprite::createWithSpriteFrame(SpriteFrame* frame, Action* touchAction, Action* detouchAction) {
+		Sprite* sprite = Sprite::createWithSpriteFrame(frame);
+		return sprite != nullptr ? create(sprite, touchAction, detouchAction) : nullptr;
+	}
+	
+	MotionButtonSprite* MotionButtonSprite::createWithSpriteFrameName(const char* framename, Action* touchAction, Action* detouchAction) {
+		Sprite* sprite = Sprite::createWithSpriteFrameName(framename);
+		return sprite != nullptr ? create(sprite, touchAction, detouchAction) : nullptr;
 	}
 	
 }
