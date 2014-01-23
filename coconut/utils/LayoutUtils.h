@@ -35,6 +35,8 @@ namespace coconut {
 		static cocos2d::Point visibleBottomRight();
 		static cocos2d::Point visibleBottomCenter();
 		
+		static void alignCenterH(const cocos2d::Point& center, float padding, cocos2d::Node* node0, ...) CC_REQUIRES_NULL_TERMINATION;
+		
 	};
 	
 }
