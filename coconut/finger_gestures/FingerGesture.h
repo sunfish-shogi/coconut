@@ -115,10 +115,10 @@ namespace coconut {
 	public:
 		
 		FingerGesture();
-		FingerGesture(cocos2d::Node* target, bool multi = false);
+		FingerGesture(cocos2d::Node* target, bool multi = false, bool swallow = true);
 		virtual ~FingerGesture();
 		
-		void registerWithNode(cocos2d::Node* target, bool multi = false);
+		void registerWithNode(cocos2d::Node* target, bool multi = false, bool swallow = true);
 		void unregister();
 		
 		int getTouchCount() const {

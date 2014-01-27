@@ -19,9 +19,9 @@ namespace coconut {
 		init();
 	}
 	
-	FingerGesture::FingerGesture(Node* target, bool multi) {
+	FingerGesture::FingerGesture(Node* target, bool multi, bool swallow) {
 		init();
-		registerWithNode(target, multi);
+		registerWithNode(target, multi, swallow);
 	}
 	
 	FingerGesture::~FingerGesture() {
@@ -58,7 +58,7 @@ namespace coconut {
 		_swipeOk = false;
 	}
 	
-	void FingerGesture::registerWithNode(Node* target, bool multi) {
+	void FingerGesture::registerWithNode(Node* target, bool multi, bool swallow) {
 		unregister();
 		
     EventListener* listener = EventListenerTouchAllAtOnce::create();
@@ -72,6 +72,7 @@ namespace coconut {
 			listener = allAtOnce;
 		} else {
 			auto oneByOne = EventListenerTouchOneByOne::create();
+			oneByOne->setSwallowTouches(swallow);
 			oneByOne->onTouchBegan = CC_CALLBACK_2(FingerGesture::onTouchBegan, this);
 			oneByOne->onTouchMoved = CC_CALLBACK_2(FingerGesture::onTouchMoved, this);
 			oneByOne->onTouchEnded = CC_CALLBACK_2(FingerGesture::onTouchEnded, this);
