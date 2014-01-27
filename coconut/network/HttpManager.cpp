@@ -65,6 +65,9 @@ namespace coconut {
 		void addHeader(const std::string& header) {
 			_headers.push_back(header);
 		}
+		void addHeaders(const std::vector<std::string>& headers) {
+			_headers.insert(_headers.end(), headers.begin(), headers.end());
+		}
 		void setOption(void* encOpt) {
 			_encOpt = encOpt;
 		}
@@ -119,21 +122,23 @@ namespace coconut {
 		}
 	}
 	
-	void HttpManager::get(const char* url, const Callback& callback, void* encOpt) {
+	void HttpManager::get(const char* url, const std::vector<std::string>& extHeaders, const Callback& callback, void* encOpt) {
 		Request* request = new Request(this, url, callback);
 		if (!_contentType.empty()) {
 			request->addHeader("Content-Type: " + _contentType);
 		}
+		request->addHeaders(extHeaders);
 		request->setOption(encOpt);
 		request->get();
 		addRequest(request);
 	}
 	
-	void HttpManager::post(const char* url, const char* body, unsigned len, const Callback& callback, void* encOpt) {
+	void HttpManager::post(const char* url, const std::vector<std::string>& extHeaders, const char* body, unsigned len, const Callback& callback, void* encOpt) {
 		Request* request = new Request(this, url, callback);
 		if (!_contentType.empty()) {
 			request->addHeader("Content-Type: " + _contentType);
 		}
+		request->addHeaders(extHeaders);
 		request->setOption(encOpt);
 		request->post(body, len);
 		addRequest(request);

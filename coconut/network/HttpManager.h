@@ -77,8 +77,14 @@ namespace coconut {
 			_commonHeaders.push_back(header);
 		}
 		
-		void get(const char* url, const Callback& callback, void* encOpt = nullptr);
-		void post(const char* url, const char* body, unsigned len, const Callback& callback, void* encOpt = nullptr);
+		void get(const char* url, const Callback& callback, void* encOpt = nullptr) {
+			get(url, std::vector<std::string>(), callback, encOpt);
+		}
+		void get(const char* url, const std::vector<std::string>& extHeaders, const Callback& callback, void* encOpt = nullptr);
+		void post(const char* url, const char* body, unsigned len, const Callback& callback, void* encOpt = nullptr) {
+			post(url, std::vector<std::string>(), body, len, callback, encOpt);
+		}
+		void post(const char* url, const std::vector<std::string>& extHeaders, const char* body, unsigned len, const Callback& callback, void* encOpt = nullptr);
 		
 	};
 	
