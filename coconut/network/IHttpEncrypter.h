@@ -15,7 +15,7 @@
 
 namespace coconut {
 
-	class IEncripter {
+	class IHttpEncrypter {
 	public:
 		virtual SharedBuffer encrypt(std::vector<std::string>& headers, const char* body, unsigned len, void* option) = 0;
 		virtual SharedBuffer decrypt(std::vector<std::string>& headers, const char* body, unsigned len, void* option) = 0;

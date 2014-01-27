@@ -13,7 +13,7 @@
 
 namespace coconut {
 	
-	class DefaultHttpEncrypter : public IEncripter {
+	class DefaultHttpEncrypter : public IHttpEncrypter {
 	public:
 		virtual SharedBuffer encrypt(std::vector<std::string>& headers, const char* body, unsigned len, void* option) override final {
 			SharedBuffer ret(len);

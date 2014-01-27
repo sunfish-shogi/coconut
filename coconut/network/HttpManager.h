@@ -35,7 +35,7 @@ namespace coconut {
 		
 	private:
 		
-		std::unique_ptr<IEncripter> _encrypter;
+		std::unique_ptr<IHttpEncrypter> _encrypter;
 		std::list<Request*> _requests;
 		std::string _contentType;
 		std::vector<std::string> _commonHeaders;
@@ -56,7 +56,7 @@ namespace coconut {
 		void setEncrypter(U param) {
 			_encrypter.reset(new T(param), std::default_delete<T>());
 		}
-		IEncripter* getEncrypter() {
+		IHttpEncrypter* getEncrypter() {
 			return _encrypter.get();
 		}
 		
