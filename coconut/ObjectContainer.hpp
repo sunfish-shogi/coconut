@@ -84,8 +84,8 @@ namespace coconut {
 		 @param instance intance to be registered as specified interface.
 		 @tparam I interface type
 		 */
-		template<class I>
-		void add(I* item)
+		template<class I, class D = ObjectDeleter<I>>
+		void add(I* item, D* d = new D())
 		{
 			if (this != global() && std::is_base_of<Singleton, I>::value) {
 				global()->add(item);
@@ -94,7 +94,7 @@ namespace coconut {
 				std::string name = info.name();
 				if (map.count(name) == 0) {
 					std::cout << "ObjectContainer: add " << name << std::endl;
-					Object object = { item, new ObjectDeleter<I>() };
+					Object object = { item, d };
 					map.insert(std::pair<std::string, Object>(name, std::move(object)));
 				} else {
 					std::cout << "ObjectContainer: " << info.name() << " is already exists." << std::endl;
