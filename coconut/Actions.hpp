@@ -18,5 +18,6 @@
 #include "actions/PreferredSizeTo.h"
 #include "actions/SlideIn.h"
 #include "actions/SlideOut.h"
+#include "actions/ChangeZOrder.h"
 
 #endif
