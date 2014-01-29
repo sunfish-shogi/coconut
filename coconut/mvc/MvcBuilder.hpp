@@ -22,6 +22,12 @@ namespace coconut {
 		MvcModule* _mainModule = nullptr;
 		bool _prepared = false;
 		
+		void _prepare() {
+			ObjectContainer* container = _container;
+			_modules.prepare();
+			_mainModule->onDestroy([=]() {ObjectContainer::releaseContainer(container);});
+		}
+		
 	public:
 		
 		MvcBuilder() {
@@ -53,11 +59,16 @@ namespace coconut {
 		}
 		
 		void prepare(const SceneChanger& sceneChanger) {
-			ObjectContainer* container = _container;
-			_modules.prepare();
-			_mainModule->onDestroy([=]() {ObjectContainer::releaseContainer(container);});
+			_prepare();
 			_mainModule->start(sceneChanger);
 			_prepared = true;
+		}
+		
+		cocos2d::Scene* prepareWithNoTransition() {
+			_prepare();
+			_mainModule->start();
+			_prepared = true;
+			return _mainModule->scene();
 		}
 		
 	};

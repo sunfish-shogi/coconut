@@ -44,6 +44,7 @@ namespace coconut {
 		void onDestroy(const std::function<void ()>& callback);
 		
 		void start(const SceneChanger& sceneChanger);
+		void start();
 		
 	};
 

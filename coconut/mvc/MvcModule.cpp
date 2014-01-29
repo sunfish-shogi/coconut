@@ -161,4 +161,9 @@ namespace coconut {
 		sceneChanger.changeTo(_scene);
 	}
 	
+	void MvcModule::start() {
+		_scene->setScheduleManager(get<ScheduleManager>());
+		_scene->onEnter();
+	}
+	
 }
